@@ -1,5 +1,10 @@
+@font-face{
+  font-family: 'Anton';
+  src: url('../assets/font/Anton/Anton-Regular.ttf') format('truetype');
+}
 .hello {
   color: red;
+  font-family: 'Anton', sans-serif;
 }
 .img {
   background-image: url("./meinv.png");
