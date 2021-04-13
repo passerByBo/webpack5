@@ -1,5 +1,3 @@
 # webpack5
 
-webpack5 练习
-
-系统查看webpack5文档
+学习webpack5，查看 生成的代码以及源码实现
