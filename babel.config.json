@@ -1,0 +1,6 @@
+// presets 是一系列 plugin 的集合，表示预设项
+// plugin 特定某一项功能
+{
+    "presets": ["@babel/preset-env", "@babel/preset-react"],
+    "plugins": ["@babel/proposal-class-properties"]
+}
