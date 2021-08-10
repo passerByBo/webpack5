@@ -1,4 +1,5 @@
 const path = require('path');
+const glob = require('glob');
 //提取CSS文件
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge } = require('webpack-merge');
@@ -13,6 +14,16 @@ const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 //并行压缩插件
 const TerserPlugin = require('terser-webpack-plugin')
 
+//擦除无用的css  PurifyCSS遍历代码，识别已经用到的 css class。 
+//uncss需要通过 jsdom 加载，所有的样式通过 PostCSS 解析，通过 document.querySelector 识别 html 文件中不存在的选择器。
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+
+//图片压缩
+//无损压缩推荐imagemin-gifsicle imagemin-jpegtran imagemin-optipng imagemin-svgo
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+
+const PATHS = { src: path.resolve('../src') }
+
 module.exports = merge(common, {
     mode: 'production',
     stats: 'verbose',//输出所有信息normal：标准信息；error-only：只有错误的时候才输出信息，命令中传入参数输出stats.json
@@ -21,7 +32,7 @@ module.exports = merge(common, {
         path: path.resolve(__dirname, '../', 'dist')
     },
     optimization: {
-        minimize: false,
+        minimize: true,
 
         //'...'可以继承默认的压缩配置
         minimizer: [
@@ -77,6 +88,14 @@ module.exports = merge(common, {
         ]
     },
     plugins: [
+        new ImageMinimizerPlugin({
+            minimizerOptions: {
+              plugins: [['jpegtran', { progressive: true }]],
+            },
+          }),
+        new PurgeCSSPlugin({
+            paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true })
+        }),
         new MiniCssExtractPlugin({
             filename: '[name]_[contenthash:8].css'
         }),

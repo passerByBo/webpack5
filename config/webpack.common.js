@@ -39,6 +39,24 @@ const { entry, htmlWebpackPlugins } = setMap();
 
 
 module.exports = {
+    //打包时间优化（效果明显）
+    cache: {
+        type: 'filesystem',//memory基于内存的临时缓存
+        //cacheDirectory: path.resolve(__dirname, '.temp_cache')
+    },
+    //resolve减少打包时间，缩小构建目标
+    // resolve: {
+    //     //合理使用 alias，引用三方依赖的生成版本。
+    //     alias: {
+    //         react: path.resolve(__dirname, './node_modules/react/dist/react.min.js')
+    //     },
+    //     //resolve.modules 减少模块搜索层级，指定当前 node_modules。
+    //     modules: [path.resolve(__dirname, './node_modules')],
+    //     //resolve.extension 对于没有指定后缀的引用，指定解析的文件后缀算法。
+    //     extensions: ['.js', '.jsx', '.json'],
+    //     //resovle.mainFields 指定入口文件
+    //     mainFields: ['main']
+    // },
     entry: {
         ...entry,
         main: path.join(__dirname, '../src/index.jsx'),

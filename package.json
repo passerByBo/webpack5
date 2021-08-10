@@ -10,7 +10,7 @@
     "build:dev": "webpack --config config/webpack.dev.js",
     "build:prod": "webpack --config config/webpack.prod.js",
     "build:ssr": "webpack --config config/webpack.ssr.js",
-    "build:dll":"webpack --config config/webpack.dll.js",
+    "build:dll": "webpack --config config/webpack.dll.js",
     "watch": "webpack --watch",
     "server": "webpack server",
     "precommit": "lint-staged",
@@ -51,6 +51,7 @@
     "mini-css-extract-plugin": "^2.2.0",
     "node-notifier": "^10.0.0",
     "postcss-loader": "^6.1.1",
+    "purgecss-webpack-plugin": "^4.0.3",
     "px2rem-loader": "^0.1.9",
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^5.1.4",
@@ -63,6 +64,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "image-minimizer-webpack-plugin": "^2.2.0",
     "lib-flexible": "^0.3.2",
     "moment": "^2.29.1",
     "react": "^17.0.2",
