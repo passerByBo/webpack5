@@ -1,6 +1,14 @@
 const path = require('path');
+const webpack = require('webpack');
 const glob = require('glob');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const notifier = require('node-notifier');
+var ICON = path.join(__dirname, 'icon.png');
+
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
 
 //设置多页打包，思路是使用glob解析出对应的入口文件，然后设置对应的entry和HtmlWebpackPlugin
 function setMap() {
@@ -48,7 +56,15 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 use: [
+                    //并行多线程打包
+                    {
+                        loader: 'thread-loader',
+                        options: {
+                            workder: 3,
+                        }
+                    },
                     'babel-loader',
+                    //会报错提示找不上.eslintrc
                     // 'eslint-loader'
                 ]
             },
@@ -67,9 +83,46 @@ module.exports = {
         ]
     },
     plugins: [
+        //基础库分离,基础包和业务基础包打包成一个文件，可以提供给其它项目使用
+        new webpack.DllReferencePlugin({
+            context: __dirname,
+            manifest: require('../build/library/library.json'),
+            scope: 'xyz',
+            sourceType: 'commonjs2',
+        }),
+        //优化提示
+        new FriendlyErrorsWebpackPlugin({
+            onErrors: (severity, errors) => {
+                if (severity !== 'error') {
+                    return;
+                }
+                const error = errors[0];
+                notifier.notify({
+                    title: "Webpack error",
+                    message: severity + ': ' + error.name,
+                    subtitle: error.file || '',
+                    icon: ICON
+                });
+            }
+        }),
+        //主动捕获并处理构建错误,compiler 在每次构建结束后会触发 done 这个 hook,process.exit 主动处理构建报错也可以console提示
+        // function () {
+        //     //this指向compiler
+        //     this.hooks.done.tap('done', (stats) => {
+        //         if (
+        //             stats.compilation.errors &&
+        //             stats.compilation.errors.length &&
+        //             process.argv.indexOf('--watch') === -1
+        //         ) {
+        //             process.exit(1); // 抛出异常，终端就知道构建失败了
+        //         }
+        //     })
+        // },
         ...htmlWebpackPlugins,
         new HtmlWebpackPlugin({
             template: path.join(__dirname, '../', 'public/index.ejs')
-        })
+        }),
+        //包体积分析
+        // new BundleAnalyzerPlugin()
     ]
 }

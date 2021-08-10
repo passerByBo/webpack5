@@ -10,17 +10,27 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 //提取公共资源，使用CDN
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
+//并行压缩插件
+const TerserPlugin = require('terser-webpack-plugin')
+
 module.exports = merge(common, {
     mode: 'production',
+    stats: 'verbose',//输出所有信息normal：标准信息；error-only：只有错误的时候才输出信息，命令中传入参数输出stats.json
     output: {
         filename: '[name]_[chunkhash:8].bundle.js',
         path: path.resolve(__dirname, '../', 'dist')
     },
     optimization: {
-        minimize: true,
+        minimize: false,
 
         //'...'可以继承默认的压缩配置
-        minimizer: [/**压缩css*/new CssMinimizerPlugin(), '...']
+        minimizer: [
+            /**压缩css*/
+            new CssMinimizerPlugin(),
+            //并行压缩
+            new TerserPlugin({ parallel: 2 }),
+            '...'
+        ]
     },
     module: {
         rules: [
@@ -70,19 +80,20 @@ module.exports = merge(common, {
         new MiniCssExtractPlugin({
             filename: '[name]_[contenthash:8].css'
         }),
-        new HtmlWebpackExternalsPlugin({
-            externals: [
-                {
-                    module: 'react',
-                    entry: 'https://now8.gtimg.com/now/lib/16.8.6/react.min.js',
-                    global: 'React'
-                },
-                {
-                    module: 'react-dom',
-                    entry: 'https://now8.gtimg.com/now/lib/16.8.6/react-dom.min.js',
-                    global: 'ReactDOM',
-                },
-            ]
-        })
+        //分包使用CDN替换
+        // new HtmlWebpackExternalsPlugin({
+        //     externals: [
+        //         {
+        //             module: 'react',
+        //             entry: 'https://now8.gtimg.com/now/lib/16.8.6/react.min.js',
+        //             global: 'React'
+        //         },
+        //         {
+        //             module: 'react-dom',
+        //             entry: 'https://now8.gtimg.com/now/lib/16.8.6/react-dom.min.js',
+        //             global: 'ReactDOM',
+        //         },
+        //     ]
+        // })
     ]
 })
