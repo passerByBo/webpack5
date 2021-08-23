@@ -88,11 +88,12 @@ module.exports = merge(common, {
         ]
     },
     plugins: [
-        new ImageMinimizerPlugin({
-            minimizerOptions: {
-              plugins: [['jpegtran', { progressive: true }]],
-            },
-          }),
+        //只限webpack4使用
+        // new ImageMinimizerPlugin({
+        //     minimizerOptions: {
+        //       plugins: [['jpegtran', { progressive: true }]],
+        //     },
+        //   }),
         new PurgeCSSPlugin({
             paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true })
         }),
